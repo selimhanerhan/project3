@@ -127,47 +127,13 @@ np.set_printoptions(threshold=np.inf)
 #print(allGrids[0])
 redCount = 0
 yellowCount = 0
-GRID = allGrids[0]
-print(GRID)
-for i in range(20):
-    for j in range(20):
-        if GRID[i][j] == "R":
-            redCount+= 1
-        elif GRID[i][j] == "Y":
-            yellowCount+=1
-
-print("yellow count" + str (yellowCount + 1) + "Red count" + str(redCount + 1))
 
 ## Labeling the data whether its safe or dangerous
 ### red count needs to be equal to 2
 #### check left if left is R and right is R then its dangerous
 #### check top if top is R and if the bottom is R then its dangerous
 # Function to check if a red wire is laid before a yellow wire
-def is_dangerous(grid):
-    for i in range(20):
-        red_count_row = 0  # Counter for red cells in the row
-        red_count_col = 0  # Counter for red cells in the column
 
-        for j in range(20):
-            if grid[i][j] == "R":
-                red_count_row += 1
-                # Check only up to the second red cell in the row
-                if red_count_row > 2:
-                    break
-                # Check the rest of the row for red and the only other color is yellow
-                if "R" in grid[i][:j] or "R" in grid[i][j + 1:]:
-                    if np.count_nonzero(grid[i] == "Yellow") == 1:
-                        return True
-            elif grid[i][j] == "Y":
-                red_count_col += 1
-                # Check only up to the second red cell in the column
-                if red_count_col > 2:
-                    break
-                # Check the rest of the column for red and the only other color is yellow
-                if "R" in [grid[x][j] for x in range(20) if x != i]:
-                    if np.count_nonzero(grid[:, j] == "Yellow") == 1:
-                        return True
-    return False
 
 # Function to label the grid as safe or dangerous
 def label_grid(grid):
@@ -181,4 +147,21 @@ for grid in allGrids:
     label = label_grid(grid)
     gridLabels[str(grid)] = label
 
-#print(gridLabels.values())
+
+
+## MODEL SPACE
+
+numFeatures = len(gridLabels)
+
+weightVector = np.random.randn(numFeatures, 1)
+
+# f(x_1,x_2,...,x_d) = sigmoid(w_0 + x_1 w_1 + x_2 w_2 + ... + w_d x_d)
+def predict(inputVector, weightVector):
+    result = np.dot(inputVector, weightVector)
+    return result
+
+# it turns the result of dot product into a probability thats between 0 to 1.
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+
