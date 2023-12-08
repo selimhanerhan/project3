@@ -1,3 +1,7 @@
+import collections as clc
+import random
+
+import numpy as np
 
     # Generate a 20x20 Grid:
     
@@ -43,8 +47,6 @@
     
     
  
-import random
-import numpy as np
 
 
 
@@ -68,17 +70,21 @@ def getRandomHotColor(random_color):
     random_hot_vector = color_to_one_hot[random_color]
     return random_hot_vector
 
-def RowColoring(grid, colorsForRow):
+def RowColoring(grid, colorsForRow, danger):
     row_index = random.choice(sizeForRow)
-    random_color = random.choice(colorsForRow)     
+    random_color = random.choice(colorsForRow)   
+    if random_color == "Y" and ("R" not in (colorsForRow or colorsForCol)):
+        danger[0] = 1
     colorsForRow.remove(random_color)
     sizeForRow.remove(row_index)
     grid[row_index, :] = random_color
     return grid
 
-def ColumnColoring(grid, colorsForCol):
+def ColumnColoring(grid, colorsForCol, danger):
     col_index = random.choice(sizeForCol)
-    random_color = random.choice(colorsForCol)     
+    random_color = random.choice(colorsForCol)    
+    if random_color == "Y" and ("R" not in (colorsForRow or colorsForCol)):
+        danger[0] = 1
     colorsForCol.remove(random_color)
     sizeForCol.remove(col_index)
     grid[:, col_index] = random_color
@@ -97,24 +103,35 @@ def encode_grid(grid, color_to_one_hot):
 allGrids = []
 ## when we create the data does every data need to be unique?
 
+gridsDict = clc.defaultdict()
+
+
+
+
 for i in range(numSamples):
     colorsForRow = ["R", "B", "Y", "G"]
     colorsForCol = ["R", "B", "Y", "G"]
     sizeForRow = list(range(0,20))
     sizeForCol = list(range(0,20))
+    danger = [0]
     
     # generating the grid
     grid = generate_grid(20)
     # filling the first row
-    grid = RowColoring(grid, colorsForRow)
+    grid = RowColoring(grid, colorsForRow, danger)
     # filling first col
-    grid = ColumnColoring(grid,colorsForCol)
+    grid = ColumnColoring(grid,colorsForCol, danger)
     # filling second row
-    grid = RowColoring(grid, colorsForRow)
+    grid = RowColoring(grid, colorsForRow, danger)
     # filling second col
-    grid = ColumnColoring(grid, colorsForCol)
+    grid = ColumnColoring(grid, colorsForCol, danger)
+
 
     allGrids.append(grid)
+    gridsDict[i] = danger[0]
+
+
+print(gridsDict)
 
 np.set_printoptions(threshold=np.inf)
 #print(allGrids[0])
@@ -127,13 +144,14 @@ yellowCount = 0
 #### check top if top is R and if the bottom is R then its dangerous
 # Function to check if a red wire is laid before a yellow wire
 
-
+'''
 # Function to label the grid as safe or dangerous
 def label_grid(grid):
     if is_dangerous(grid):
         return "Dangerous"
     else:
         return "Safe"
+'''
 
 gridLabels = {}
 for grid in allGrids:
