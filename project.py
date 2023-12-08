@@ -1,18 +1,11 @@
 
-    # Generate Random Colorings:
-    #     Define a set of colors: {Red, Blue, Yellow, Green}.
-    #     Implement a function to randomly select a color from the set.
-
     # Generate a 20x20 Grid:
-    #     Initialize a 20x20 grid with all cells initially uncolored.
-    #     Implement functions to randomly select rows and columns based on the provided logic.
-    #     Apply the color to the selected rows and columns according to the instructions.
-
+    
     # Encode the Grid:
     #     Use one-hot encoding to represent the colors. Assign a unique one-hot vector to each color.
 
     # Loss Function
-    #   Use the categorical cross entropy
+    #   Use the binary cross entropy
     #   -y_i * ln(f(x_i)) - (1-y_i) * ln(1 - f(x_i))
     
     # Output space
@@ -158,10 +151,23 @@ weightVector = np.random.randn(numFeatures, 1)
 # f(x_1,x_2,...,x_d) = sigmoid(w_0 + x_1 w_1 + x_2 w_2 + ... + w_d x_d)
 def predict(inputVector, weightVector):
     result = np.dot(inputVector, weightVector)
-    return result
+    return sigmoid(result)
 
 # it turns the result of dot product into a probability thats between 0 to 1.
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
+# loss = -y_i * log(f(x_i)) - (1-y_i) * log(1 - f(x_i))
+def binary_cross_entropy_loss(yTrue, yPredicted):
+    # small constant to avoid log(0)
+    epsilon = 1e-15 
+    loss = -yTrue * np.log(np.clip(yPredicted, epsilon, 1 - epsilon) - (1 - yTrue) * np.log(np.clip(1 - yPredicted, epsilon, 1 - epsilon)))
+    return loss
+
+
+# not too sure about this but it should represent the gradient as below
+# −y_i ​log(f(x_i​))−(1−y_i​)log(1−f(x_i​))
+def gradient_binary_cross_entropy(yTrue, yPredicted, x_j):
+    gradient = -yTrue * (1 - yPredicted) * x_j + (1 - yTrue) * yPredicted * x_j
+    return gradient
 
