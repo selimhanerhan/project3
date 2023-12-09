@@ -100,6 +100,7 @@ def encode_grid(grid, color_to_one_hot):
 
     return np.array(encoded_vector)
 
+
 allGrids = []
 ## when we create the data does every data need to be unique?
 
@@ -127,9 +128,8 @@ for i in range(numSamples):
     grid = ColumnColoring(grid, colorsForCol, danger)
 
 
-    allGrids.append(grid)
-    gridsDict[i] = danger[0]
-
+    grid_one_hot = encode_grid(grid, color_to_one_hot)
+    gridsDict[str(grid_one_hot.tolist())] = danger[0]
 
 print(gridsDict)
 
@@ -144,14 +144,13 @@ yellowCount = 0
 #### check top if top is R and if the bottom is R then its dangerous
 # Function to check if a red wire is laid before a yellow wire
 
-'''
 # Function to label the grid as safe or dangerous
 def label_grid(grid):
     if is_dangerous(grid):
         return "Dangerous"
     else:
         return "Safe"
-'''
+
 
 gridLabels = {}
 for grid in allGrids:
